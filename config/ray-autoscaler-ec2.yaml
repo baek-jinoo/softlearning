@@ -18,10 +18,10 @@ initial_workers: 0
 # and opens all the necessary ports to support the Ray cluster.
 # Empty string means disabled.
 docker:
-    image: "jinoo/softlearning:gpu_0.0.1"
-    container_name: "softlearning" # e.g. ray_docker
-    run_options:
-    - --runtime=nvidia
+    image: ""
+    container_name: "" # e.g. ray_docker
+    #run_options:
+    #- --runtime=nvidia
     # container_name: "sac-ray-mujoco"
 
 # The autoscaler will scale up the cluster to this target fraction of resource
@@ -53,10 +53,10 @@ auth:
 # For more documentation on available fields, see:
 # http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.ServiceResource.create_instances
 head_node:
-  #InstanceType: c4.xlarge
+    #InstanceType: c4.xlarge
     InstanceType: p2.xlarge
     #InstanceType: t2.micro
-    ImageId: ami-0f975f4008eebe941 # softlearning custom ami
+    ImageId: ami-09a823ba2fc2703b6
     #ImageId: ami-0027dfad6168539c7 # deep learning ami AWS
     #ImageId: ami-0c023c7a2d5ec68c0 # deep learning base ami AWS
     #ImageId: ami-0b294f219d14e6a82
@@ -78,11 +78,12 @@ head_node:
 # For more documentation on available fields, see:
 # http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.ServiceResource.create_instances
 worker_nodes:
-    InstanceType: c4.2xlarge
+  #InstanceType: c4.2xlarge
+    InstanceType: p2.xlarge
     # InstanceType: t2.micro
     #ImageId: ami-0b294f219d14e6a82
     #ImageId: ami-0027dfad6168539c7 # deep learning ami AWS
-    ImageId: ami-0f975f4008eebe941 # softlearning custom ami
+    ImageId: ami-09a823ba2fc2703b6
 
     # Run workers on spot by default. Comment this out to use on-demand.
     InstanceMarketOptions:
@@ -97,13 +98,13 @@ worker_nodes:
 # dictionary from REMOTE_PATH: LOCAL_PATH, e.g.
 file_mounts: {
     "/tmp/current_git_HEAD": "/home/jin/workspace/softlearning/.git/HEAD",
-    "/root/.mujoco/mjkey.txt": "~/.mujoco/mjkey.txt",
+    "~/.mujoco/mjkey.txt": "~/.mujoco/mjkey.txt",
 }
 
 # List of shell commands to run to set up nodes.
 setup_commands:
     - >-
-        (test -e softlearning
+        (test -e $HOME/softlearning
         || git clone https://github.com/rail-berkeley/softlearning.git $HOME/softlearning)
         && cd $HOME/softlearning
         && git fetch --all
